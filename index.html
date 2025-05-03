@@ -6,31 +6,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>포키 주사위 게임 ♡</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Apple SD Gothic Neo', sans-serif;
       background-color: #fffafc;
       margin: 0;
       padding: 0;
+      position: relative;
       overflow: hidden;
     }
 
-    .slide {
+    .screen {
       position: absolute;
       top: 0;
-      left: 100vw;
+      left: 0;
       width: 100vw;
       height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
       justify-content: center;
-      text-align: center;
-      transition: left 0.6s ease-in-out;
+      align-items: center;
       padding: 20px;
+      text-align: center;
+      visibility: hidden;
+      z-index: 0;
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
 
     .active {
-      left: 0 !important;
+      visibility: visible;
+      z-index: 1;
+      opacity: 1;
     }
 
     h1 {
@@ -53,47 +63,56 @@
       background-color: #333;
     }
 
-    #typingText {
+    #typingText, #endingText {
       font-size: 1.2rem;
       color: #333;
       white-space: pre-wrap;
       min-height: 80px;
+      line-height: 2.2;
     }
 
     #pockyImage {
-      margin-top: 20px;
+      margin-top: 60px;
       width: 60%;
-      max-width: 280px;
+      max-width: 300px;
+      display: none;
+    }
+
+    #nagumoCheer {
+      font-size: 1.2rem;
+      color: #333;
+      margin-top: 30px;
       display: none;
     }
   </style>
 </head>
 <body>
 
-  <div class="slide active" id="slide1">
+  <div class="screen active" id="screen1">
     <h1>어떤 맛으로 가볼래? ♡</h1>
     <button onclick="rollDice()">주사위 굴리기 ♡</button>
   </div>
 
-  <div class="slide" id="slide2">
+  <div class="screen" id="screen2">
     <h1 id="typingText"></h1>
-    <button onclick="goToSlide(3)">먹으러 가기 🍫</button>
+    <button onclick="goToScreen(3)">먹으러 가기 🍫</button>
   </div>
 
-  <div class="slide" id="slide3">
+  <div class="screen" id="screen3">
     <h1 id="endingText"></h1>
-    <img id="pockyImage" src="pocky-invisible.jpeg" alt="포키 사라짐 이미지" />
+    <img id="pockyImage" src="nagumo-invisible.jpeg" alt="나구모 투명화 이미지" />
+    <div id="nagumoCheer">화이팅, 나구모!</div>
   </div>
 
   <script>
-    const slides = document.querySelectorAll(".slide");
+    const screens = document.querySelectorAll(".screen");
     const flavors = ["초콜릿", "말차", "딸기", "쿠키앤크림", "블루베리", "바나나"];
 
-    function goToSlide(n) {
-      slides.forEach((slide, index) => {
-        slide.classList.remove("active");
+    function goToScreen(n) {
+      screens.forEach((screen, index) => {
+        screen.classList.remove("active");
         if (index === n - 1) {
-          slide.classList.add("active");
+          screen.classList.add("active");
         }
       });
       if (n === 3) showEnding();
@@ -101,8 +120,8 @@
 
     function rollDice() {
       const selected = flavors[Math.floor(Math.random() * flavors.length)];
-      goToSlide(2);
-      typeText(`축하해~ ✨\n너의 포키는 ${selected} 맛이야! 🍓`);
+      goToScreen(2);
+      typeText(`축 당첨! 당신의 포키는 ${selected} 맛!`);
     }
 
     function typeText(text) {
@@ -118,15 +137,30 @@
 
     function showEnding() {
       const el = document.getElementById("endingText");
-      const text = "포키를 들었는데… 어라?\n투명화되어 사라져버렸어…♡\n아쉽지만 다음에 또 만나자!";
+      const lines = [
+        "당신은 포키를 들었다.",
+        "그러나 포키는 투명화되어 사라졌다."
+      ];
+      let lineIndex = 0;
+      let charIndex = 0;
       el.innerText = "";
-      let i = 0;
+
       const interval = setInterval(() => {
-        el.innerText += text.charAt(i);
-        i++;
-        if (i >= text.length) {
-          clearInterval(interval);
-          document.getElementById("pockyImage").style.display = "block";
+        const currentLine = lines[lineIndex].substring(0, charIndex + 1);
+        const previous = lines.slice(0, lineIndex).join("\n\n");
+        el.innerText = previous + (lineIndex > 0 ? "\n\n" : "") + currentLine;
+        charIndex++;
+
+        if (charIndex === lines[lineIndex].length) {
+          lineIndex++;
+          charIndex = 0;
+          if (lineIndex === lines.length) {
+            clearInterval(interval);
+            setTimeout(() => {
+              document.getElementById("pockyImage").style.display = "block";
+              document.getElementById("nagumoCheer").style.display = "block";
+            }, 300);
+          }
         }
       }, 70);
     }
