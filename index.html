@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>포키 주사위 게임</title>
+  <style>
+    body {
+      font-family: 'Apple SD Gothic Neo', sans-serif;
+      background-color: #fff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    h1 {
+      margin-top: 80px;
+      font-size: 1.8rem;
+      color: #222;
+    }
+    button {
+      margin-top: 40px;
+      padding: 12px 24px;
+      font-size: 1.1rem;
+      background-color: #000;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #444;
+    }
+    #result {
+      margin-top: 30px;
+      font-size: 1.3rem;
+      color: #333;
+    }
+    #finalMessage,
+    #lastLine {
+      margin-top: 18px;
+      font-size: 1rem;
+      color: #555;
+    }
+    #pockyImage {
+      margin-top: 30px;
+      width: 60%;
+      max-width: 300px;
+      opacity: 1;
+      display: none;
+    }
+    .hidden {
+      display: none;
+    }
+    .spacer {
+      height: 80px;
+    }
+  </style>
+</head>
+<body>
+  <h1>어떤 맛으로 가볼래?</h1>
+  <button id="rollButton" onclick="rollDice()">주사위 굴리기</button>
+  <div id="result" class="hidden"></div>
+  <button id="eatButton" class="hidden" onclick="showFinal()">먹으러 가기</button>
+  <div id="finalMessage" class="hidden">당신은 포키를 들었다. 그러나 포키는 투명화되어 사라졌다.</div>
+  <div class="spacer"></div>
+  <div id="lastLine" class="hidden">아쉽게 됐네.</div>
+  <img id="pockyImage" src="pocky-invisible.jpeg" alt="포키 사라짐 이미지" />
+  <script>
+    const flavors = ["초콜릿", "말차", "딸기", "쿠키앤크림", "블루베리", "바나나"];
+    function rollDice() {
+      const index = Math.floor(Math.random() * flavors.length);
+      const selected = flavors[index];
+      document.getElementById("result").innerHTML = `축 당첨! 당신의 포키는 <strong>${selected}</strong> 맛!`;
+      document.getElementById("result").classList.remove("hidden");
+      document.getElementById("eatButton").classList.remove("hidden");
+    }
+    function showFinal() {
+      document.getElementById("finalMessage").classList.remove("hidden");
+      setTimeout(() => {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+        setTimeout(() => {
+          document.getElementById("lastLine").classList.remove("hidden");
+          document.getElementById("pockyImage").style.display = "block";
+        }, 800);
+      }, 500);
+    }
+  </script>
+</body>
+</html>
